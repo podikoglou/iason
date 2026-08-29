@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use winnow::{
     ModalResult, Parser,
     ascii::{dec_int, space0},
-    combinator::{alt, repeat, separated_pair},
+    combinator::{alt, delimited, repeat, separated_pair},
     stream::AsChar,
     token::take_while,
 };
@@ -21,8 +21,8 @@ pub enum JsonValue {
 }
 
 pub fn parse_string(input: &mut &str) -> ModalResult<JsonString> {
-    ('"', take_while(0.., AsChar::is_alpha), '"')
-        .map(|(_, string, _): (_, &str, _)| string.to_string())
+    delimited('"', take_while(0.., AsChar::is_alpha), '"')
+        .map(&str::to_string)
         .map(JsonString)
         .parse_next(input)
 }
@@ -39,7 +39,7 @@ pub fn parse_key_value(input: &mut &str) -> ModalResult<(JsonString, JsonValue)>
 }
 
 pub fn parse_object(input: &mut &str) -> ModalResult<JsonObject> {
-    (
+    delimited(
         "{",
         repeat(0.., parse_key_value)
             .fold(
@@ -52,8 +52,7 @@ pub fn parse_object(input: &mut &str) -> ModalResult<JsonObject> {
             .map(JsonObject),
         "}",
     )
-        .map(|(_, object, _): (_, JsonObject, _)| object)
-        .parse_next(input)
+    .parse_next(input)
 }
 
 pub fn parse_value(input: &mut &str) -> ModalResult<JsonValue> {
