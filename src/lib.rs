@@ -42,13 +42,7 @@ pub fn parse_object(input: &mut &str) -> ModalResult<JsonObject> {
     delimited(
         "{",
         repeat(0.., parse_key_value)
-            .fold(
-                HashMap::<JsonString, JsonValue>::new,
-                |mut acc: HashMap<JsonString, JsonValue>, item| {
-                    acc.insert(item.0, item.1);
-                    acc
-                },
-            )
+            .map(|obj: HashMap<JsonString, JsonValue>| obj)
             .map(JsonObject),
         "}",
     )
