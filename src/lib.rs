@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::{collections::BTreeMap, fmt::Display};
 
 use winnow::{
     ModalResult, Parser,
@@ -8,14 +8,14 @@ use winnow::{
     token::take_while,
 };
 
-#[derive(Debug, PartialEq, Eq, Hash)]
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct JsonString(pub String);
 
 #[derive(Debug, PartialEq)]
 pub struct JsonNumber(pub f32);
 
 #[derive(Debug, PartialEq)]
-pub struct JsonObject(pub HashMap<JsonString, JsonValue>);
+pub struct JsonObject(pub BTreeMap<JsonString, JsonValue>);
 
 #[derive(Debug, PartialEq)]
 pub enum JsonValue {
@@ -46,7 +46,7 @@ pub fn parse_object(input: &mut &str) -> ModalResult<JsonObject> {
     delimited(
         "{",
         repeat(0.., parse_key_value)
-            .map(|obj: HashMap<JsonString, JsonValue>| obj)
+            .map(|obj: BTreeMap<JsonString, JsonValue>| obj)
             .map(JsonObject),
         "}",
     )
