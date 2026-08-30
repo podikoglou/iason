@@ -70,22 +70,22 @@ impl Display for JsonValue {
     }
 }
 
-pub fn parse_string(input: &mut &str) -> ModalResult<JsonString> {
+fn parse_string(input: &mut &str) -> ModalResult<JsonString> {
     delimited('"', take_while(0.., AsChar::is_alpha), '"')
         .map(&str::to_string)
         .map(JsonString)
         .parse_next(input)
 }
 
-pub fn parse_number(input: &mut &str) -> ModalResult<JsonNumber> {
+fn parse_number(input: &mut &str) -> ModalResult<JsonNumber> {
     dec_int.map(JsonNumber).parse_next(input)
 }
 
-pub fn parse_key_value(input: &mut &str) -> ModalResult<(JsonString, JsonValue)> {
+fn parse_key_value(input: &mut &str) -> ModalResult<(JsonString, JsonValue)> {
     separated_pair(parse_string, (space0, ':', space0), parse_value).parse_next(input)
 }
 
-pub fn parse_object(input: &mut &str) -> ModalResult<JsonObject> {
+fn parse_object(input: &mut &str) -> ModalResult<JsonObject> {
     delimited(
         "{",
         repeat(0.., parse_key_value)
@@ -96,7 +96,7 @@ pub fn parse_object(input: &mut &str) -> ModalResult<JsonObject> {
     .parse_next(input)
 }
 
-pub fn parse_value(input: &mut &str) -> ModalResult<JsonValue> {
+fn parse_value(input: &mut &str) -> ModalResult<JsonValue> {
     alt((
         parse_string.map(JsonValue::String),
         parse_number.map(JsonValue::Number),
