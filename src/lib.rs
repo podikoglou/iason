@@ -8,12 +8,16 @@ use winnow::{
     token::take_while,
 };
 
-#[derive(PartialEq, Eq, Hash)]
+#[derive(Debug, PartialEq, Eq, Hash)]
 pub struct JsonString(String);
 
+#[derive(Debug, PartialEq)]
 pub struct JsonNumber(pub f32);
+
+#[derive(Debug, PartialEq)]
 pub struct JsonObject(pub HashMap<JsonString, JsonValue>);
 
+#[derive(Debug, PartialEq)]
 pub enum JsonValue {
     String(JsonString),
     Number(JsonNumber),
