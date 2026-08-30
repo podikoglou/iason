@@ -20,7 +20,7 @@ impl Display for JsonString {
 }
 
 #[derive(Debug, PartialEq)]
-pub struct JsonNumber(pub f32);
+pub struct JsonNumber(pub i32);
 
 impl Display for JsonNumber {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -78,10 +78,7 @@ pub fn parse_string(input: &mut &str) -> ModalResult<JsonString> {
 }
 
 pub fn parse_number(input: &mut &str) -> ModalResult<JsonNumber> {
-    dec_int
-        .map(|x: i32| x as f32)
-        .map(JsonNumber)
-        .parse_next(input)
+    dec_int.map(JsonNumber).parse_next(input)
 }
 
 pub fn parse_key_value(input: &mut &str) -> ModalResult<(JsonString, JsonValue)> {
