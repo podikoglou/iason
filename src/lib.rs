@@ -11,17 +11,63 @@ use winnow::{
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct JsonString(pub String);
 
+impl Display for JsonString {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "\"{}\"", self.0)?;
+
+        Ok(())
+    }
+}
+
 #[derive(Debug, PartialEq)]
 pub struct JsonNumber(pub f32);
 
+impl Display for JsonNumber {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.0)?;
+
+        Ok(())
+    }
+}
+
 #[derive(Debug, PartialEq)]
 pub struct JsonObject(pub BTreeMap<JsonString, JsonValue>);
+
+impl Display for JsonObject {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{{")?;
+
+        let iter = self.0.iter();
+
+        for (i, (key, value)) in iter.enumerate() {
+            if i > 0 {
+                write!(f, ", ")?;
+            }
+
+            write!(f, "{key}: {value}")?;
+        }
+
+        write!(f, "}}")?;
+
+        Ok(())
+    }
+}
 
 #[derive(Debug, PartialEq)]
 pub enum JsonValue {
     String(JsonString),
     Number(JsonNumber),
     Object(JsonObject),
+}
+
+impl Display for JsonValue {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            JsonValue::String(inner) => write!(f, "{inner}"),
+            JsonValue::Number(inner) => write!(f, "{inner}"),
+            JsonValue::Object(inner) => write!(f, "{inner}"),
+        }
+    }
 }
 
 pub fn parse_string(input: &mut &str) -> ModalResult<JsonString> {
