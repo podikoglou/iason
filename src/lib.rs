@@ -61,3 +61,10 @@ pub fn parse_value(input: &mut &str) -> ModalResult<JsonValue> {
     ))
     .parse_next(input)
 }
+
+/// This is the high level function for parsing some text into a [JsonValue].
+pub fn parse_json(input: &str) -> anyhow::Result<JsonValue> {
+    parse_value
+        .parse(input)
+        .map_err(|e| anyhow::format_err!("{e}"))
+}
