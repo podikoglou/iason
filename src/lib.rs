@@ -9,7 +9,7 @@ use winnow::{
 };
 
 #[derive(Debug, PartialEq, Eq, Hash)]
-pub struct JsonString(String);
+pub struct JsonString(pub String);
 
 #[derive(Debug, PartialEq)]
 pub struct JsonNumber(pub f32);
